@@ -1,6 +1,5 @@
 using API.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +11,16 @@ builder.Services.AddDbContext<StoreContext>(Opt =>
 {
     Opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddCors();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseCors(opt => 
+{
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:3000");
+});
+
 app.MapControllers();
 
 DbInitializer.InitDb(app);
